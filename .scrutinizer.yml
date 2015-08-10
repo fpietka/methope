@@ -5,13 +5,6 @@ filter:
 build:
   environment:
     php: '5.6.0'
-    tests:
-      override:
-        -
-      command: 'phpunit --coverage-clover=build.xml'
-      coverage:
-        file: 'build.xml'
-        format: 'php-clover'
 
 checks:
   php:

@@ -18,6 +18,10 @@ before_script:
   - composer install --prefer-source
 script:
   - phpunit
+after_script:
+  ## Scrutinizer
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover ./build/logs/clover.xml
 
 # This part is there until Travis migrate to Ubuntu Trusty
 # see: https://github.com/travis-ci/travis-ci/issues/3788
