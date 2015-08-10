@@ -1,0 +1,23 @@
+{
+    "name": "fpietka/metope",
+    "authors": [
+        {
+            "name": "François Pietka",
+            "email": "francois@pietka.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Metope\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Unit\\Tests\\": "tests/unit/"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.3",
+        "phpunit/phpunit": "^4.8"
+    }
+}
