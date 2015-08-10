@@ -1,0 +1,31 @@
+filter:
+  paths: ['lib/*']
+  excluded_paths: ['tests/*']
+
+build:
+  environment:
+    php: '5.6.0'
+    tests:
+      override:
+        -
+      command: 'phpunit --coverage-clover=build.xml'
+      coverage:
+        file: 'build.xml'
+        format: 'php-clover'
+
+checks:
+  php:
+    custom_coding_standard:
+      ruleset_path: 'ruleset.xml'
+
+tools:
+  php_mess_detector: true
+  php_code_sniffer: true
+  sensiolabs_security_checker: true
+  php_pdepend: true
+  php_loc:
+    enabled: true
+    excluded_dirs: [tests]
+    php_cpd:
+      enabled: true
+      excluded_dirs: [tests]
