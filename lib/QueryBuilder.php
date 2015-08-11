@@ -135,18 +135,20 @@ class QueryBuilder
      */
     public function assemble()
     {
+        $sql = '';
+
         switch ($this->type) {
             case self::MODE_SELECT:
-                $sql = 'SELECT ';
+                $sql .= 'SELECT ';
                 break;
             case self::MODE_INSERT:
-                $sql = 'INSERT INTO ';
+                $sql .= 'INSERT INTO ';
                 break;
             case self::MODE_UPDATE:
-                $sql = 'UPDATE ';
+                $sql .= 'UPDATE ';
                 break;
             case self::MODE_DELETE:
-                $sql = 'DELETE ';
+                $sql .= 'DELETE ';
                 break;
         }
 
