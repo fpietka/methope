@@ -16,6 +16,13 @@ class QueryBuilder
 
     private $type = null;
 
+    /**
+     * PDO connection
+     */
+    private $conn;
+
+    private $part = array();
+
     public function __construct(PDO $conn)
     {
         $this->conn = $conn;
