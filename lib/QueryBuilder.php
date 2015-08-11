@@ -21,7 +21,7 @@ class QueryBuilder
      */
     private $conn;
 
-    private $part = array();
+    private $parts = array();
 
     public function __construct(PDO $conn)
     {
@@ -50,7 +50,7 @@ class QueryBuilder
         $this->setType(self::MODE_SELECT);
 
         if (!empty($fields)) {
-            $this->part['FROM FIELDS'] = $fields;
+            $this->parts['FROM FIELDS'] = $fields;
         }
 
         return $this;
@@ -79,7 +79,7 @@ class QueryBuilder
 
     public function from($table)
     {
-        $this->part['FROM'] = $table;
+        $this->parts['FROM'] = $table;
 
         return $this;
     }
@@ -94,7 +94,7 @@ class QueryBuilder
             list($join['left'], $join['right']) = $fields;
         }
 
-        $this->part['JOIN'][] = $join;
+        $this->parts['JOIN'][] = $join;
 
         return $this;
     }
@@ -148,28 +148,28 @@ class QueryBuilder
                 break;
         }
 
-        if (is_array($this->part['FROM FIELDS'])) {
-            $sql .= implode(', ', array_map('trim', $this->part['FROM FIELDS'])) . ' ';
+        if (is_array($this->parts['FROM FIELDS'])) {
+            $sql .= implode(', ', array_map('trim', $this->parts['FROM FIELDS'])) . ' ';
         } else {
-            $sql .= trim($this->part['FROM FIELDS']) . ' ';
+            $sql .= trim($this->parts['FROM FIELDS']) . ' ';
         }
 
-        $sql .= 'FROM ' . $this->part['FROM'] . ' ';
+        $sql .= 'FROM ' . $this->parts['FROM'] . ' ';
 
-        if (!empty($this->part['JOIN'])) {
-            foreach ($this->part['JOIN'] as $join) {
+        if (!empty($this->parts['JOIN'])) {
+            foreach ($this->parts['JOIN'] as $join) {
                 $sql .= $join['type'] . ' JOIN ' . $join['table'] . ' ON ';
-                $sql .= $this->part['FROM'] . '.' . $join['left'];
+                $sql .= $this->parts['FROM'] . '.' . $join['left'];
                 $sql .= ' ' . $join['operation'] . ' ';
                 $sql .= $join['table'] . '.' . $join['right'] . ' ';
             }
         }
 
-        if (!empty($this->part['WHERE'])) {
+        if (!empty($this->parts['WHERE'])) {
             $sql .= 'WHERE ';
-            $sql .= implode(' ', array_slice(array_shift($this->part['WHERE']), 1)) . ' ';
+            $sql .= implode(' ', array_slice(array_shift($this->parts['WHERE']), 1)) . ' ';
 
-            foreach ($this->part['WHERE'] as $where) {
+            foreach ($this->parts['WHERE'] as $where) {
                 $sql .= implode(' ', $where) . ' ';
             }
         }
