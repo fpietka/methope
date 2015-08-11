@@ -86,9 +86,11 @@ class QueryBuilder
 
     public function join($table, $fields, $operation = '=', $type = 'INNER')
     {
-        $join['table'] = $table;
-        $join['operation'] = $operation;
-        $join['type'] = $type;
+        $join = [
+            'table' => $table,
+            'operation' => $operation,
+            'type' => $type
+        ];
 
         if (is_array($fields)) {
             list($join['left'], $join['right']) = $fields;
@@ -118,12 +120,12 @@ class QueryBuilder
             $value = $this->conn->quote($value);
         }
 
-        $this->part['WHERE'] = [[
+        $this->parts['WHERE'][] = [
             'mode' => $mode,
             'field' => $field,
             'operation' => $operation,
             'value' => $value
-        ]];
+        ];
 
         return $this;
     }
