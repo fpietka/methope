@@ -162,10 +162,16 @@ class QueryBuilder
 
         if (!empty($this->parts['JOIN'])) {
             foreach ($this->parts['JOIN'] as $join) {
+                if (is_array($join['table'])) {
+                    $right_table = array_pop($join['table']);
+                    $join['table'] = array_shift($join['table']);
+                } else {
+                    $right_table = $this->parts['FROM'];
+                }
                 $sql .= $join['type'] . ' JOIN ' . $join['table'] . ' ON ';
-                $sql .= $this->parts['FROM'] . '.' . $join['left'];
+                $sql .= $join['table'] . '.' . $join['left'];
                 $sql .= ' ' . $join['operation'] . ' ';
-                $sql .= $join['table'] . '.' . $join['right'] . ' ';
+                $sql .= $right_table . '.' . $join['right'] . ' ';
             }
         }
 

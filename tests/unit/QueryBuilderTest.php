@@ -57,14 +57,20 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
     {
         $pdo = new PDO('sqlite:dummy.db');
 
-        $plain = "SELECT * FROM foo INNER JOIN bar ON foo.bar_id = bar.id";
-        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->join('bar', array('bar_id', 'id'))->assemble();
+        $plain = "SELECT * FROM foo INNER JOIN bar ON bar.id = foo.bar_id";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->join('bar', array('id', 'bar_id'))->assemble();
 
         $this->assertEquals($plain, $generated);
 
-        $plain = "SELECT * FROM foo INNER JOIN bar ON foo.bar_id = bar.id WHERE bar.foobar = 'foobar'";
-        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->join('bar', array('bar_id',
-            'id'))->where('bar.foobar', 'foobar')->assemble();
+        $plain = "SELECT * FROM foo INNER JOIN bar ON bar.id = foo.bar_id WHERE bar.foobar = 'foobar'";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->join('bar', array('id',
+            'bar_id'))->where('bar.foobar', 'foobar')->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo INNER JOIN bar ON bar.id = foo.bar_id INNER JOIN baz ON baz.bar_id = bar.id WHERE bar.foobar = 'foobar'";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->join('bar', array('id',
+            'bar_id'))->join(array('baz', 'bar'), array('bar_id', 'id'))->where('bar.foobar', 'foobar')->assemble();
 
         $this->assertEquals($plain, $generated);
     }
