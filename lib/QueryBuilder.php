@@ -175,7 +175,16 @@ class QueryBuilder
             }
         }
 
-        $sql .= 'FROM ' . $this->parts['FROM'] . ' ';
+        switch ($this->type) {
+            case self::MODE_SELECT:
+            case self::MODE_DELETE:
+                $sql .= 'FROM ' . $this->parts['FROM'] . ' ';
+                break;
+            case self::MODE_INSERT:
+            case self::MODE_UPDATE:
+                $sql .= $this->parts['FROM'] . ' ';
+                break;
+        }
 
         if (!empty($this->parts['JOIN'])) {
             foreach ($this->parts['JOIN'] as $join) {
