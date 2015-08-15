@@ -139,7 +139,6 @@ class QueryBuilder
                 break;
             default:
                 throw new \Exception('Method not supported for mode ' . $this->type);
-                break;
         }
 
         return $this;
