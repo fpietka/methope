@@ -186,6 +186,25 @@ class QueryBuilder
                 break;
         }
 
+        if ($this->type == self::MODE_INSERT) {
+            if (!empty($this->parts['VALUES'])) {
+                $sql .= '(';
+                $sql .= implode(', ', array_keys($this->parts['VALUES']));
+                $sql .= ') VALUES (';
+                $sql .= implode(', ', array_map(function ($value) { return $this->conn->quote($value); }, $this->parts['VALUES']));
+                $sql .= ') ';
+            }
+        } else if ($this->type == self::MODE_UPDATE) {
+            if (!empty($this->parts['VALUES'])) {
+                $sql .= 'SET ';
+                $set = array();
+                foreach ($this->parts['VALUES'] as $field => $value) {
+                    $set[] = "$field = " . $this->conn->quote($value);
+                }
+                $sql .= implode(', ', $set) . ' ';
+            }
+        }
+
         if (!empty($this->parts['JOIN'])) {
             foreach ($this->parts['JOIN'] as $join) {
                 if (is_array($join['table'])) {
