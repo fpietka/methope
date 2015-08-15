@@ -167,10 +167,12 @@ class QueryBuilder
                 break;
         }
 
-        if (is_array($this->parts['FROM FIELDS'])) {
-            $sql .= implode(', ', array_map('trim', $this->parts['FROM FIELDS'])) . ' ';
-        } else {
-            $sql .= trim($this->parts['FROM FIELDS']) . ' ';
+        if (isset($this->parts['FROM FIELDS'])) {
+            if (is_array($this->parts['FROM FIELDS'])) {
+                $sql .= implode(', ', array_map('trim', $this->parts['FROM FIELDS'])) . ' ';
+            } else {
+                $sql .= trim($this->parts['FROM FIELDS']) . ' ';
+            }
         }
 
         $sql .= 'FROM ' . $this->parts['FROM'] . ' ';
