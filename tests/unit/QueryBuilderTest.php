@@ -74,4 +74,56 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($plain, $generated);
     }
+
+    public function testInsert()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "INSERT INTO foo (name, size) VALUES ('fubar', '10')";
+        $values = [
+            'name' => 'fubar',
+            'size' => 10
+        ];
+        $generated = (new QueryBuilder($pdo))->insert()->from('foo')->values($values)->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
+
+    public function testUpdate()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "UPDATE foo SET name = 'fubar', size = '10'";
+        $values = [
+            'name' => 'fubar',
+            'size' => 10
+        ];
+        $generated = (new QueryBuilder($pdo))->update()->from('foo')->values($values)->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "UPDATE foo SET name = 'fubar', size = '10' WHERE id = 1";
+        $values = [
+            'name' => 'fubar',
+            'size' => 10
+        ];
+        $generated = (new QueryBuilder($pdo))->update()->from('foo')->values($values)->where('id', 1)->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
+
+    public function testDelete()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "DELETE FROM foo";
+        $generated = (new QueryBuilder($pdo))->delete()->from('foo')->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "DELETE FROM foo WHERE id = 1";
+        $generated = (new QueryBuilder($pdo))->delete()->from('foo')->where('id', 1)->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
 }
