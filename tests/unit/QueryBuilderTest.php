@@ -8,6 +8,43 @@ use PHPUnit_Framework_TestCase;
 
 class QueryBuilderTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException Metope\TypeAlreadySetException
+     */
+    public function testMultipleSetTypeFail()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+        (new QueryBuilder($pdo))->select()->update();
+    }
+
+    /**
+     * @expectedException Metope\NotAllowedMethodException
+     */
+    public function testValuesOnDeleteFail()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+        (new QueryBuilder($pdo))->delete()->values([]);
+    }
+
+    /**
+     * @expectedException Metope\NotAllowedMethodException
+     */
+    public function testValuesOnSelectFail()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+        (new QueryBuilder($pdo))->select()->values([]);
+    }
+
+    public function testToString()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->assemble();
+        $tostring = (new QueryBuilder($pdo))->select('*')->from('foo')->__toString();
+
+        $this->assertEquals($generated, $tostring);
+    }
+
     public function testSimpleSelect()
     {
         $pdo = new PDO('sqlite:dummy.db');
@@ -42,8 +79,8 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($plain, $generated);
 
-        $plain = "SELECT * FROM foo WHERE bar != TRUE";
-        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->where('bar', true, '!=')->assemble();
+        $plain = "SELECT * FROM foo WHERE bar != FALSE";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->where('bar', false, '!=')->assemble();
 
         $this->assertEquals($plain, $generated);
 
