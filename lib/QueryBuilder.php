@@ -41,7 +41,7 @@ class QueryBuilder
         if (empty($this->type)) {
             $this->type = $type;
         } else {
-            throw new \Exception('Already set');
+            throw new TypeAlreadySetException('Already set');
         }
     }
 
@@ -138,7 +138,7 @@ class QueryBuilder
                 $this->parts['VALUES'] = $values;
                 break;
             default:
-                throw new \Exception('Method not supported for mode ' . $this->type);
+                throw new NotAllowedMethodException('Method not supported for mode ' . $this->type);
         }
 
         return $this;
