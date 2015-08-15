@@ -130,6 +130,21 @@ class QueryBuilder
         return $this;
     }
 
+    public function values(array $values)
+    {
+        switch ($this->type) {
+            case self::MODE_INSERT:
+            case self::MODE_UPDATE:
+                $this->parts['VALUES'] = $values;
+                break;
+            default:
+                throw new \Exception('Method not supported for mode ' . $this->type);
+                break;
+        }
+
+        return $this;
+    }
+
     /**
      * Put SQL together before execution.
      */
