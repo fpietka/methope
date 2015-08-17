@@ -88,6 +88,11 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
         $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->where('bar', null, '!=')->assemble();
 
         $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo WHERE bar IS NOT NULL AND bar != FALSE";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->where('bar', null, '!=')->where('bar', false, '!=')->assemble();
+
+        $this->assertEquals($plain, $generated);
     }
 
     public function testJoin()
