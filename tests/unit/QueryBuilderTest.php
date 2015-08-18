@@ -168,4 +168,24 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($plain, $generated);
     }
+
+    public function testOrderBy()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "SELECT * FROM foo ORDER BY name";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->orderBy('name')->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo ORDER BY name asc";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->orderBy('name', 'asc')->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo ORDER BY name DESC, type AsC";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->orderBy(array('name', 'type'), array('DESC', 'AsC'))->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
 }

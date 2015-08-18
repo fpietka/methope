@@ -144,6 +144,28 @@ class QueryBuilder
         return $this;
     }
 
+    private function array_combine2($arr1, $arr2)
+    {
+        $count = min(count($arr1), count($arr2));
+
+        return array_combine(array_slice($arr1, 0, $count), array_slice($arr2, 0, $count));
+    }
+
+    public function orderBy($fields, $order = null)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        if (!is_array($order)) {
+            $order = [$order];
+        }
+
+        $this->parts['ORDER'] = $this->array_combine2($fields, $order);
+
+        return $this;
+    }
+
     /**
      * Put SQL together before execution.
      */
@@ -226,6 +248,17 @@ class QueryBuilder
             foreach ($this->parts['WHERE'] as $where) {
                 $sql .= implode(' ', $where) . ' ';
             }
+        }
+
+        if (!empty($this->parts['ORDER'])) {
+            $sql .= 'ORDER BY ';
+            $orders = [];
+
+            foreach ($this->parts['ORDER'] as $field => $direction) {
+                $orders[] = "$field $direction";
+            }
+
+            $sql .= implode(', ', $orders) . ' ';
         }
 
         return trim($sql);
