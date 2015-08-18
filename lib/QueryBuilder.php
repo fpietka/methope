@@ -166,6 +166,17 @@ class QueryBuilder
         return $this;
     }
 
+    public function groupBy($fields)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        $this->parts['GROUP'] = $fields;
+
+        return $this;
+    }
+
     /**
      * Put SQL together before execution.
      */
@@ -248,6 +259,11 @@ class QueryBuilder
             foreach ($this->parts['WHERE'] as $where) {
                 $sql .= implode(' ', $where) . ' ';
             }
+        }
+
+        if (!empty($this->parts['GROUP'])) {
+            $sql .= 'GROUP BY ';
+            $sql .= implode(', ', $this->parts['GROUP']) . ' ';
         }
 
         if (!empty($this->parts['ORDER'])) {
