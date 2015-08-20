@@ -36,6 +36,13 @@ class QueryBuilder
         return $this->assemble();
     }
 
+    private function arrayCombine($arr1, $arr2)
+    {
+        $count = min(count($arr1), count($arr2));
+
+        return array_combine(array_slice($arr1, 0, $count), array_slice($arr2, 0, $count));
+    }
+
     private function setType($type)
     {
         if (empty($this->type)) {
@@ -144,12 +151,6 @@ class QueryBuilder
         return $this;
     }
 
-    private function array_combine2($arr1, $arr2)
-    {
-        $count = min(count($arr1), count($arr2));
-
-        return array_combine(array_slice($arr1, 0, $count), array_slice($arr2, 0, $count));
-    }
 
     public function orderBy($fields, $order = null)
     {
@@ -161,7 +162,7 @@ class QueryBuilder
             $order = [$order];
         }
 
-        $this->parts['ORDER'] = $this->array_combine2($fields, $order);
+        $this->parts['ORDER'] = $this->arrayCombine($fields, $order);
 
         return $this;
     }
