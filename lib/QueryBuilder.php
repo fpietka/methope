@@ -77,6 +77,20 @@ class QueryBuilder
         return $this;
     }
 
+    public function values(array $values)
+    {
+        switch ($this->type) {
+            case self::MODE_INSERT:
+            case self::MODE_UPDATE:
+                $this->parts['VALUES'] = $values;
+                break;
+            default:
+                throw new NotAllowedMethodException('Method not supported for mode ' . $this->type);
+        }
+
+        return $this;
+    }
+
     public function delete()
     {
         $this->setType(self::MODE_DELETE);
@@ -137,20 +151,16 @@ class QueryBuilder
         return $this;
     }
 
-    public function values(array $values)
+    public function groupBy($fields)
     {
-        switch ($this->type) {
-            case self::MODE_INSERT:
-            case self::MODE_UPDATE:
-                $this->parts['VALUES'] = $values;
-                break;
-            default:
-                throw new NotAllowedMethodException('Method not supported for mode ' . $this->type);
+        if (!is_array($fields)) {
+            $fields = [$fields];
         }
+
+        $this->parts['GROUP'] = $fields;
 
         return $this;
     }
-
 
     public function orderBy($fields, $order = null)
     {
@@ -163,17 +173,6 @@ class QueryBuilder
         }
 
         $this->parts['ORDER'] = $this->arrayCombine($fields, $order);
-
-        return $this;
-    }
-
-    public function groupBy($fields)
-    {
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
-
-        $this->parts['GROUP'] = $fields;
 
         return $this;
     }
