@@ -21,7 +21,9 @@ class QueryBuilder
      */
     private $conn;
 
-    private $parts = array();
+    private $parts = [
+        'HAVING' => []
+    ];
 
     public function __construct(PDO $conn)
     {
@@ -162,6 +164,35 @@ class QueryBuilder
         return $this;
     }
 
+    public function having($clauses, $values = array(), $additive = true)
+    {
+        // if array and additive, prepend 'AND', else 'OR'
+        if (!is_array($clauses)) {
+            $clauses = [$clauses];
+        }
+
+        if (!is_array($values)) {
+            $values = [$values];
+        }
+
+        foreach ($clauses as &$clause) {
+            if ($additive)  {
+                $clause = 'AND ' . $clause;
+            } else {
+                $clause = 'OR ' . $clause;
+            }
+
+            $value = array_shift($values);
+            if (!empty($value)) {
+                $clause = str_replace('?', $this->conn->quote($value), $clause);
+            }
+        }
+
+        $this->parts['HAVING'] = array_merge($this->parts['HAVING'], $clauses);
+
+        return $this;
+    }
+
     public function orderBy($fields, $order = null)
     {
         if (!is_array($fields)) {
@@ -264,6 +295,11 @@ class QueryBuilder
         if (!empty($this->parts['GROUP'])) {
             $sql .= 'GROUP BY ';
             $sql .= implode(', ', $this->parts['GROUP']) . ' ';
+        }
+
+        if (!empty($this->parts['HAVING'])) {
+            $sql .= 'HAVING ';
+            $sql .= ltrim(implode(' ', $this->parts['HAVING']), 'AND ') . ' ';
         }
 
         if (!empty($this->parts['ORDER'])) {
