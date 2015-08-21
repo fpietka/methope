@@ -203,4 +203,35 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($plain, $generated);
     }
+
+    public function testHaving()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "SELECT * FROM foo GROUP BY name HAVING COUNT(id) > 2";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->groupBy('name')->having('COUNT(id) > 2')->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo GROUP BY name HAVING COUNT(id) > 2 AND COUNT(id) < 7";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->groupBy('name')->having('COUNT(id) > 2')->having('COUNT(id) < 7')->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo GROUP BY name HAVING COUNT(id) > 2 AND COUNT(id) < 7";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->groupBy('name')->having(['COUNT(id) > 2',
+            'COUNT(id) < 7'])->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo GROUP BY name HAVING COUNT(id) > 2 OR name != 'baz'";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->groupBy('name')->having('COUNT(id) > 2')->having('name != ?', 'baz', false)->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo GROUP BY name HAVING COUNT(id) > 2 AND name != 'baz' AND surname != 'fubar'";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->groupBy('name')->having('COUNT(id) > 2')->having(['name != ?', 'surname != ?'], ['baz', 'fubar'])->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
 }
