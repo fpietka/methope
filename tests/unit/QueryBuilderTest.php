@@ -234,4 +234,29 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($plain, $generated);
     }
+
+    public function testLimit()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "SELECT * FROM foo LIMIT 1";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->limit(1)->assemble();
+
+        $this->assertEquals($plain, $generated);
+
+        $plain = "SELECT * FROM foo LIMIT 5, 10";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->limit('5, 10')->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
+
+    public function testOffset()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "SELECT * FROM foo LIMIT 1 OFFSET 42";
+        $generated = (new QueryBuilder($pdo))->select('*')->from('foo')->limit(1)->offset(42)->assemble();
+
+        $this->assertEquals($plain, $generated);
+    }
 }

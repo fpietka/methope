@@ -208,6 +208,20 @@ class QueryBuilder
         return $this;
     }
 
+    public function limit($value)
+    {
+        $this->parts['LIMIT'] = $value;
+
+        return $this;
+    }
+
+    public function offset($value)
+    {
+        $this->parts['OFFSET'] = $value;
+
+        return $this;
+    }
+
     /**
      * Put SQL together before execution.
      */
@@ -311,6 +325,14 @@ class QueryBuilder
             }
 
             $sql .= implode(', ', $orders) . ' ';
+        }
+
+        if (!empty($this->parts['LIMIT'])) {
+            $sql .= 'LIMIT ' . $this->parts['LIMIT'] . ' ';
+
+            if (!empty($this->parts['OFFSET'])) {
+                $sql .= 'OFFSET ' . $this->parts['OFFSET'] . ' ';
+            }
         }
 
         return trim($sql);
