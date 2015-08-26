@@ -222,6 +222,11 @@ class QueryBuilder
         return $this;
     }
 
+    public function union(QueryBuilder $first, QueryBuilder $second)
+    {
+        return $first . ' UNION ' . $second;
+    }
+
     /**
      * Put SQL together before execution.
      */

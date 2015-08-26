@@ -259,4 +259,17 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($plain, $generated);
     }
+
+    public function testUnion()
+    {
+        $pdo = new PDO('sqlite:dummy.db');
+
+        $plain = "SELECT id, name FROM foo UNION SELECT id, name FROM bar";
+        $first = (new QueryBuilder($pdo))->select(['id', 'name'])->from('foo');
+        $second = (new QueryBuilder($pdo))->select(['id', 'name'])->from('bar');
+
+        $generated = (new QueryBuilder($pdo))->union($first, $second);
+
+        $this->assertEquals($plain, $generated);
+    }
 }
